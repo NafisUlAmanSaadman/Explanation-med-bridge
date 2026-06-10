@@ -1,0 +1,1003 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MedBridge — AI-Powered Medical Learning Platform</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-primary: #0b132b;
+      --bg-secondary: #1c2541;
+      --bg-card: rgba(28, 37, 65, 0.6);
+      --border-color: rgba(91, 192, 190, 0.2);
+      --text-primary: #f8f9fa;
+      --text-secondary: #a5a9b4;
+      --primary: #5bc0be;
+      --primary-hover: #6fffe9;
+      --secondary: #3a506b;
+      --accent-green: #4caf50;
+      --accent-red: #ff5252;
+      --accent-orange: #ff9800;
+      --font-heading: 'Outfit', sans-serif;
+      --font-body: 'Inter', sans-serif;
+      --font-mono: 'Fira Code', monospace;
+      --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+      --glass-filter: blur(12px);
+    }
+
+    .light-theme {
+      --bg-primary: #f4f7f6;
+      --bg-secondary: #ffffff;
+      --bg-card: rgba(255, 255, 255, 0.8);
+      --border-color: rgba(91, 192, 190, 0.4);
+      --text-primary: #1c2541;
+      --text-secondary: #5a6065;
+      --primary: #0b8494;
+      --primary-hover: #086775;
+      --secondary: #e2e8f0;
+      --glass-shadow: 0 8px 32px 0 rgba(11, 20, 40, 0.08);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-primary);
+      color: var(--text-primary);
+      font-family: var(--font-body);
+      line-height: 1.6;
+      display: flex;
+      min-height: 100vh;
+      overflow-x: hidden;
+      transition: var(--transition);
+    }
+
+    /* Sidebar Navigation */
+    aside {
+      width: 380px;
+      background-color: var(--bg-secondary);
+      border-right: 1px solid var(--border-color);
+      display: flex;
+      flex-direction: column;
+      position: fixed;
+      height: 100vh;
+      z-index: 100;
+      transition: var(--transition);
+    }
+
+    .sidebar-header {
+      padding: 2rem 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .logo-container {
+      width: 368px;
+      height: 128px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .logo-container img {
+      filter: drop-shadow(0 0 15px rgba(91, 192, 190, 0.75));
+      transition: filter 0.3s ease;
+    }
+
+    .logo-container img:hover {
+      filter: drop-shadow(0 0 25px rgba(111, 255, 233, 0.95));
+    }
+
+    .logo-text h1 {
+      font-family: var(--font-heading);
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .logo-text p {
+      font-size: 0.75rem;
+      color: var(--primary);
+      font-weight: 600;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+    }
+
+    .sidebar-nav {
+      flex: 1;
+      padding: 1.5rem 1rem;
+      overflow-y: auto;
+    }
+
+    .sidebar-nav ul {
+      list-style: none;
+    }
+
+    .sidebar-nav li {
+      margin-bottom: 0.5rem;
+    }
+
+    .sidebar-nav a {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.75rem 1rem;
+      color: var(--text-secondary);
+      text-decoration: none;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      font-weight: 500;
+      transition: var(--transition);
+    }
+
+    .sidebar-nav a:hover, .sidebar-nav a.active {
+      color: var(--text-primary);
+      background-color: rgba(91, 192, 190, 0.15);
+      border-left: 3px solid var(--primary);
+      padding-left: calc(1rem - 3px);
+    }
+
+    .sidebar-footer {
+      padding: 1.5rem;
+      border-top: 1px solid var(--border-color);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .theme-toggle-btn {
+      background: none;
+      border: 1px solid var(--border-color);
+      color: var(--text-primary);
+      padding: 0.5rem;
+      border-radius: 8px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: var(--transition);
+    }
+
+    .theme-toggle-btn:hover {
+      background-color: rgba(91, 192, 190, 0.1);
+      border-color: var(--primary);
+    }
+
+    /* Main Content Area */
+    main {
+      margin-left: 380px;
+      flex: 1;
+      padding: 3rem 4rem;
+      max-width: 1200px;
+      transition: var(--transition);
+    }
+
+    header {
+      margin-bottom: 3.5rem;
+      position: relative;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 0.35rem 0.75rem;
+      background-color: rgba(91, 192, 190, 0.1);
+      border: 1px solid var(--primary);
+      color: var(--primary);
+      border-radius: 50px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 1rem;
+      box-shadow: 0 0 15px rgba(91, 192, 190, 0.1);
+    }
+
+    header h2 {
+      font-family: var(--font-heading);
+      font-size: 2.8rem;
+      font-weight: 800;
+      color: var(--text-primary);
+      margin-bottom: 1rem;
+      letter-spacing: -0.5px;
+      background: linear-gradient(90deg, var(--text-primary), var(--primary));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    header p {
+      font-size: 1.15rem;
+      color: var(--text-secondary);
+      max-width: 800px;
+    }
+
+    /* Section Styles */
+    section {
+      margin-bottom: 4.5rem;
+      scroll-margin-top: 2rem;
+    }
+
+    h3 {
+      font-family: var(--font-heading);
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    h3::before {
+      content: '';
+      display: inline-block;
+      width: 4px;
+      height: 24px;
+      background-color: var(--primary);
+      border-radius: 2px;
+    }
+
+    p {
+      margin-bottom: 1.5rem;
+      color: var(--text-secondary);
+      font-size: 1.05rem;
+    }
+
+    /* Cards & Grids */
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .card {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 2rem;
+      box-shadow: var(--glass-shadow);
+      backdrop-filter: var(--glass-filter);
+      -webkit-backdrop-filter: var(--glass-filter);
+      transition: var(--transition);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 4px;
+      background: linear-gradient(90deg, var(--primary), var(--primary-hover));
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: var(--transition);
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+      border-color: rgba(91, 192, 190, 0.4);
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+    }
+
+    .card:hover::before {
+      transform: scaleX(1);
+    }
+
+    .card-icon {
+      font-size: 2.2rem;
+      margin-bottom: 1.25rem;
+      display: inline-block;
+    }
+
+    .card h4 {
+      font-family: var(--font-heading);
+      font-size: 1.35rem;
+      font-weight: 700;
+      margin-bottom: 0.75rem;
+      color: var(--text-primary);
+    }
+
+    .card p {
+      font-size: 0.95rem;
+      margin-bottom: 0;
+    }
+
+    /* Steps List */
+    .steps-container {
+      margin: 2rem 0;
+      position: relative;
+    }
+
+    .step-item {
+      display: flex;
+      gap: 1.5rem;
+      margin-bottom: 1.5rem;
+      position: relative;
+    }
+
+    .step-number {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background-color: rgba(91, 192, 190, 0.1);
+      border: 2px solid var(--primary);
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 0.95rem;
+      flex-shrink: 0;
+    }
+
+    .step-content {
+      padding-top: 0.25rem;
+    }
+
+    .step-content h4 {
+      font-size: 1.15rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 0.5rem;
+    }
+
+    /* Code Block Tabs */
+    .code-container {
+      margin: 2rem 0;
+      background-color: rgba(11, 19, 43, 0.8);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: var(--glass-shadow);
+    }
+
+    .code-header {
+      background-color: rgba(28, 37, 65, 0.9);
+      padding: 0.75rem 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .code-title {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      font-family: var(--font-mono);
+      font-weight: 500;
+    }
+
+    .tab-group {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .tab-btn {
+      background: none;
+      border: none;
+      color: var(--text-secondary);
+      padding: 0.35rem 0.75rem;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.8rem;
+      font-weight: 600;
+      font-family: var(--font-body);
+      transition: var(--transition);
+    }
+
+    .tab-btn.active, .tab-btn:hover {
+      color: var(--text-primary);
+      background-color: rgba(91, 192, 190, 0.15);
+    }
+
+    pre {
+      padding: 1.5rem;
+      overflow-x: auto;
+      margin: 0;
+    }
+
+    code {
+      font-family: var(--font-mono);
+      font-size: 0.9rem;
+      color: #6fffe9;
+    }
+
+    /* Custom Tables */
+    .table-container {
+      width: 100%;
+      overflow-x: auto;
+      margin: 2rem 0;
+      border-radius: 12px;
+      border: 1px solid var(--border-color);
+      box-shadow: var(--glass-shadow);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 0.95rem;
+    }
+
+    th {
+      background-color: rgba(28, 37, 65, 0.9);
+      color: var(--text-primary);
+      font-family: var(--font-heading);
+      font-weight: 600;
+      padding: 1rem 1.5rem;
+      border-bottom: 2px solid var(--border-color);
+    }
+
+    td {
+      padding: 1rem 1.5rem;
+      border-bottom: 1px solid var(--border-color);
+      color: var(--text-secondary);
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    tr:hover td {
+      color: var(--text-primary);
+      background-color: rgba(91, 192, 190, 0.05);
+    }
+
+    .tag {
+      display: inline-block;
+      padding: 0.2rem 0.5rem;
+      font-size: 0.75rem;
+      border-radius: 4px;
+      font-weight: 600;
+    }
+
+    .tag-react { background-color: rgba(0, 216, 255, 0.1); color: #00d8ff; border: 1px solid rgba(0, 216, 255, 0.2); }
+    .tag-firebase { background-color: rgba(255, 202, 40, 0.1); color: #ffca28; border: 1px solid rgba(255, 202, 40, 0.2); }
+    .tag-ai { background-color: rgba(168, 85, 247, 0.1); color: #a855f7; border: 1px solid rgba(168, 85, 247, 0.2); }
+    .tag-voice { background-color: rgba(236, 72, 153, 0.1); color: #ec4899; border: 1px solid rgba(236, 72, 153, 0.2); }
+    .tag-news { background-color: rgba(76, 175, 80, 0.1); color: #4caf50; border: 1px solid rgba(76, 175, 80, 0.2); }
+
+    /* Architect Diagram */
+    .diagram-box {
+      margin: 2.5rem 0;
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 2rem;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      box-shadow: var(--glass-shadow);
+      backdrop-filter: var(--glass-filter);
+      -webkit-backdrop-filter: var(--glass-filter);
+    }
+
+    .diagram-svg {
+      width: 100%;
+      max-width: 760px;
+      height: auto;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 992px) {
+      aside {
+        width: 80px;
+        align-items: center;
+      }
+      .logo-text, .sidebar-footer span {
+        display: none;
+      }
+      .sidebar-nav a span {
+        display: none;
+      }
+      .sidebar-nav a {
+        justify-content: center;
+        padding: 0.75rem;
+      }
+      main {
+        margin-left: 80px;
+        padding: 2rem 2.5rem;
+      }
+      header h2 {
+        font-size: 2.2rem;
+      }
+    }
+
+    @media (max-width: 768px) {
+      body {
+        flex-direction: column;
+      }
+      aside {
+        width: 100%;
+        height: 60px;
+        flex-direction: row;
+        position: fixed;
+        top: 0;
+        left: 0;
+        border-right: none;
+        border-bottom: 1px solid var(--border-color);
+        padding: 0 1rem;
+      }
+      .sidebar-header {
+        padding: 0;
+        border-bottom: none;
+      }
+      .sidebar-nav {
+        display: none; /* simple stack sidebar could be implemented, keeping simple for mobile */
+      }
+      main {
+        margin-left: 0;
+        margin-top: 60px;
+        padding: 2rem 1.5rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navigation Sidebar -->
+  <aside>
+    <div class="sidebar-header">
+      <div class="logo-container">
+        <img src="Screenshot_2026-05-30_120655-removebg-preview.png" alt="MedBridge Logo" style="width: 100%; height: 100%; object-fit: contain;">
+      </div>
+    </div>
+    <nav class="sidebar-nav">
+      <ul>
+        <li><a href="#problem" class="active"><span>Problem (The Vibe)</span></a></li>
+        <li><a href="#solution"><span>Solution</span></a></li>
+        <li><a href="#features"><span>Core Features</span></a></li>
+        <li><a href="#architecture"><span>System Design</span></a></li>
+        <li><a href="#tech-stack"><span>Technology Stack</span></a></li>
+        <li><a href="#ai-approach"><span>AI Approach</span></a></li>
+        <li><a href="#impact"><span>Impact & Next</span></a></li>
+
+      </ul>
+    </nav>
+    <div class="sidebar-footer">
+      <button class="theme-toggle-btn" id="theme-toggle" title="Toggle Dark/Light Mode">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-moon"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+      </button>
+      <span>v1.0.0</span>
+    </div>
+  </aside>
+
+  <!-- Main Content Area -->
+  <main>
+    <header>
+      <div class="badge">Technical Reference</div>
+      <h2>MedBridge Platform Explanation</h2>
+      <p>An intelligent, progressive, and highly interactive learning system tailored for MBBS students in Bangladesh, strictly aligning with the Bangladesh Medical & Dental Council (BMDC) curriculum.</p>
+    </header>
+
+    <!-- SECTION: Problem (The Vibe) -->
+    <section id="problem">
+      <h3>Problem (The Vibe)</h3>
+      <p><em>"This problem matters."</em> Medical education is a matter of life and death, yet the learning methods for medical students in Bangladesh are critically broken and outdated.</p>
+      
+      <div class="grid-2" style="margin-top: 1.5rem;">
+        <div class="card">
+          <div class="card-icon">⚠️</div>
+          <h4>The Local Crisis (Bangladesh)</h4>
+          <p>Over <strong>100,000+ MBBS students</strong> across 117 medical colleges in Bangladesh are forced to rely on passive memorization of static PDF slides, outdated photocopied handouts, and unofficial Q&A guides. Faculty shortages, particularly in rural medical colleges, mean students rarely receive high-quality viva guidance or clinical simulation trials.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">🌍</div>
+          <h4>The Global Competency Gap</h4>
+          <p>Internationally, medical education has transitioned to high-fidelity clinical simulations, active recall, and Socratic clinical reasoning. Because Bangladeshi students lack interactive simulation tools, they face an uphill battle when transitioning to clinical practice or attempting global licensing exams (like USMLE or PLAB) that test deep clinical application over rote learning.</p>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top: 1.5rem;">
+        <h4>🚨 The High Stakes: Where the System Fails Students</h4>
+        <p>The BMDC curriculum requires clearing high-stakes oral Viva-Voce and OSPE (Objective Structured Practical Examination) stations. Currently, students have <strong>zero ways to practice these dynamic, face-to-face oral exams before exam day</strong>. There is no instant feedback loop, creating a massive gap between theoretical knowledge and practical competence.</p>
+      </div>
+    </section>
+
+    <!-- SECTION: Solution -->
+    <section id="solution">
+      <h3>Solution</h3>
+      <p><em>"This is how we solve it."</em> MedBridge is a purpose-built, AI-driven learning and assessment bridge that turns passive reading into active, clinical-grade mastery.</p>
+      
+      <div class="grid-2" style="margin-top: 1.5rem;">
+        <div class="card">
+          <div class="card-icon">🎯</div>
+          <h4>Curriculum-Aligned AI Engines</h4>
+          <p>MedBridge is not a generic study tool. We digitized the entire <strong>BMDC syllabus</strong> and built interactive AI engines that simulate a strict Bangladeshi medical professor. Our Voice-First AI Viva Engine, OSPE Simulator, and Socratic DDx Trainer force students to explain clinical concepts and perform diagnoses under pressure, with instant grading rubrics.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">🔒</div>
+          <h4>The Gatekeeping Progression Engine</h4>
+          <p>We solve student engagement and study discipline by enforcing a strict progressive unlock structure: <strong>Item → Card → Term → Prof</strong>. Students cannot proceed to larger exam blocks without demonstrating competence (60%+ score) in underlying items via the AI Viva, establishing structured study habits.</p>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top: 1.5rem;">
+        <h4>✨ Why MedBridge is Different (Our Edge)</h4>
+        <p>Unlike standard LLM integrations, MedBridge uses structured prompt architectures with <strong>localized epidemiological contexts</strong> (e.g. Bangladesh's seasonal Dengue outbreaks, local hospital protocols), structured output recovery, and local device-level spaced repetition. We combine high-yield clinical simulators with real-time peer duels, creating a highly engaging, localized, and clinical-grade training ground.</p>
+      </div>
+    </section>
+
+    <!-- SECTION: Features -->
+    <section id="features">
+      <h3>Core Interactive Features</h3>
+      <div class="grid-2">
+        <!-- Card 1 -->
+        <div class="card">
+          <div class="card-icon">🎙️</div>
+          <h4>AI Viva Engine</h4>
+          <p>Simulates real oral viva-voce examinations using native Web Speech APIs. Claude/Gemini prompts 5 clinical/theoretical questions, analyzes the spoken text, and returns structured feedback and grading parameters.</p>
+        </div>
+        <!-- Card 2 -->
+        <div class="card">
+          <div class="card-icon">⏱️</div>
+          <h4>OSPE Simulator</h4>
+          <p>Objective Structured Practical Examination simulator. Replicates high-stress exam conditions with automated station advance (2-minute intervals), buzzer/bell warnings, visual references, and post-exam AI rubric checks.</p>
+        </div>
+        <!-- Card 3 -->
+        <div class="card">
+          <div class="card-icon">⚔️</div>
+          <h4>Multiplayer Battles</h4>
+          <p>Gamified peer duels. Students join dynamic rooms via 6-character room codes. A Cloud API server generates custom SBA questions, and scores are synced in real-time using Firebase RTDB.</p>
+        </div>
+        <!-- Card 4 -->
+        <div class="card">
+          <div class="card-icon">📊</div>
+          <h4>Analytics Dashboard</h4>
+          <p>Combines progress scores from Firestore to show "Prof Readiness." Track subject-wise performance graphs (e.g. Physiology vs Biochemistry), log daily study streaks, and locate syllabus bottlenecks.</p>
+        </div>
+        <!-- Card 5 -->
+        <div class="card">
+          <div class="card-icon">📰</div>
+          <h4>Medical News Feed</h4>
+          <p>Curated live medical news from Bangladesh (🇧🇩) and international sources. Students stay updated with the latest clinical developments, research breakthroughs, and public health announcements — with search, region-based filtering, and one-tap refresh.</p>
+        </div>
+        <!-- Card 6 -->
+        <div class="card">
+          <div class="card-icon">📝</div>
+          <h4>AI Note Summarizer</h4>
+          <p>Paste raw lecture transcripts, textbook paragraphs, or clinical notes, and the Gemini-powered engine instantly generates structured, high-yield bullet-point summaries with heading hierarchy. Includes document scanner (PDF/camera) input, voice playback, and persistent history.</p>
+        </div>
+        <!-- Card 7 -->
+        <div class="card">
+          <div class="card-icon">🃏</div>
+          <h4>Flashcard Auto-Generator</h4>
+          <p>Converts dense medical text into interactive Q&amp;A flashcard decks using AI. Features a 3D-flipping card interface with difficulty ratings, "Got It" / "Review Again" self-assessment, progress tracking, and locally saved deck history for spaced repetition.</p>
+        </div>
+        <!-- Card 8 -->
+        <div class="card">
+          <div class="card-icon">🩺</div>
+          <h4>Socratic DDx Trainer</h4>
+          <p>An AI-powered clinical reasoning simulator. Students present patient symptoms (or choose from preset clinical cases) and interact with a virtual "Attending Consultant" who uses Socratic questioning to guide differential diagnosis — without spoiling the final answer.</p>
+        </div>
+        <!-- Card 9 -->
+        <div class="card">
+          <div class="card-icon">🇧🇩</div>
+          <h4>Bangladesh Endemic Disease DB</h4>
+          <p>A curated database of diseases endemic to Bangladesh — Dengue, Kala-azar, Tuberculosis, Typhoid, Cholera, Arsenicosis, Leptospirosis, and Filariasis. Each entry generates AI-powered clinical case scenarios, investigations, and BMDC-aligned treatment plans on demand.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION: System Architecture -->
+    <section id="architecture">
+      <h3>System Design & Data Flow</h3>
+      <p>The diagram below visualizes how MedBridge components coordinate during an interactive viva session. Direct calls to Claude or Gemini API from the client are blocked to prevent key exposure, relying instead on secure proxy pipelines.</p>
+      
+      <div class="diagram-box">
+        <svg class="diagram-svg" viewBox="0 0 800 300" xmlns="http://www.w3.org/2000/svg">
+          <!-- Background grids for visual flair -->
+          <defs>
+            <linearGradient id="primary-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#5bc0be" />
+              <stop offset="100%" stop-color="#3a506b" />
+            </linearGradient>
+            <linearGradient id="cloud-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#a855f7" />
+              <stop offset="100%" stop-color="#6b21a8" />
+            </linearGradient>
+          </defs>
+          
+          <!-- Connections -->
+          <path d="M 140 150 L 240 150" stroke="#5bc0be" stroke-width="2" marker-end="url(#arrow)" />
+          <path d="M 380 120 L 480 80" stroke="#5bc0be" stroke-width="2" />
+          <path d="M 380 180 L 480 220" stroke="#5bc0be" stroke-width="2" />
+          <path d="M 620 80 L 700 120" stroke="#a855f7" stroke-width="2" />
+          <path d="M 620 220 L 700 180" stroke="#ffca28" stroke-width="2" />
+
+          <!-- Nodes -->
+          <!-- Client App -->
+          <rect x="20" y="100" width="120" height="100" rx="10" fill="url(#primary-grad)" stroke="#5bc0be" stroke-width="2" />
+          <text x="80" y="145" fill="#ffffff" font-family="Outfit" font-size="14" font-weight="bold" text-anchor="middle">React Client</text>
+          <text x="80" y="165" fill="#f8f9fa" font-family="Inter" font-size="10" text-anchor="middle">(Vite, Tailwind)</text>
+          
+          <!-- Local/Cloud Proxy -->
+          <rect x="240" y="100" width="140" height="100" rx="10" fill="#1c2541" stroke="#5bc0be" stroke-width="2" />
+          <text x="310" y="140" fill="#ffffff" font-family="Outfit" font-size="13" font-weight="bold" text-anchor="middle">Secure Proxy</text>
+          <text x="310" y="160" fill="#a5a9b4" font-family="Inter" font-size="9" text-anchor="middle">Dev: Express Server</text>
+          <text x="310" y="175" fill="#a5a9b4" font-family="Inter" font-size="9" text-anchor="middle">Prod: Cloud Function</text>
+          
+          <!-- LLM Engine -->
+          <rect x="480" y="30" width="140" height="80" rx="10" fill="url(#cloud-grad)" stroke="#a855f7" stroke-width="2" />
+          <text x="550" y="70" fill="#ffffff" font-family="Outfit" font-size="13" font-weight="bold" text-anchor="middle">AI LLM Provider</text>
+          <text x="550" y="90" fill="#f8f9fa" font-family="Inter" font-size="10" text-anchor="middle">(Claude / Gemini)</text>
+
+          <!-- Firebase DB -->
+          <rect x="480" y="190" width="140" height="80" rx="10" fill="#2d1c10" stroke="#ffca28" stroke-width="2" />
+          <text x="550" y="230" fill="#ffca28" font-family="Outfit" font-size="13" font-weight="bold" text-anchor="middle">Firebase Core</text>
+          <text x="550" y="250" fill="#ffffff" font-family="Inter" font-size="10" text-anchor="middle">(Firestore / RTDB)</text>
+          
+          <!-- Output -->
+          <circle cx="730" cy="150" r="40" fill="#0b132b" stroke="#5bc0be" stroke-width="3" />
+          <text x="730" y="153" fill="#5bc0be" font-family="Outfit" font-size="11" font-weight="bold" text-anchor="middle">Graded JSON</text>
+        </svg>
+      </div>
+
+      <p><strong>CORS Bypass:</strong> Direct execution of API requests to Anthropic Claude or Google Gemini from browser environments throws CORS policy errors. MedBridge implements a dual-mode proxy framework to resolve this securely.</p>
+    </section>
+
+    <!-- SECTION: Tech Stack -->
+    <section id="tech-stack">
+      <h3>Technology Stack</h3>
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>Layer</th>
+              <th>Technology</th>
+              <th>Use Case</th>
+              <th>Details</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Frontend</td>
+              <td><span class="tag tag-react">React 19</span></td>
+              <td>Single Page Application (SPA) framework</td>
+              <td>Uses Vite bundle engine, hooks for client-side state mapping.</td>
+            </tr>
+            <tr>
+              <td>Styling</td>
+              <td>Vanilla CSS / Tailwind 4</td>
+              <td>Responsive component UI styles</td>
+              <td>Curated color palettes, CSS vars, responsive CSS grid.</td>
+            </tr>
+            <tr>
+              <td>Database</td>
+              <td><span class="tag tag-firebase">Cloud Firestore</span></td>
+              <td>Syllabus hierarchy & student logs</td>
+              <td>Handles progressive unlock validation and historical metrics.</td>
+            </tr>
+            <tr>
+              <td>Realtime DB</td>
+              <td><span class="tag tag-firebase">Firebase RTDB</span></td>
+              <td>Multiplayer Battle lobbies</td>
+              <td>Enables instant answer syncing & room code handshakes.</td>
+            </tr>
+            <tr>
+              <td>AI Reasoning</td>
+              <td><span class="tag tag-ai">Claude & Gemini APIs</span></td>
+              <td>Viva examination & OSPE scoring</td>
+              <td>Generates prompt rubrics, evaluates clinical diagnoses.</td>
+            </tr>
+            <tr>
+              <td>Voice Engine</td>
+              <td><span class="tag tag-voice">Web Speech API</span></td>
+              <td>Speech-to-Text inputs</td>
+              <td>Native browser recognition (WebkitSpeechRecognition).</td>
+            </tr>
+            <tr>
+              <td>News Feed</td>
+              <td><span class="tag tag-news">NewsAPI.org</span></td>
+              <td>Live medical news stream</td>
+              <td>Proxied through Express/Cloud Functions; filters medical keywords and caches articles for 1 hour.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- SECTION: AI Approach -->
+    <section id="ai-approach">
+      <h3>AI Approach & Intelligence Layer</h3>
+      <p>MedBridge is not a simple quiz app with an LLM bolted on top. Every AI interaction is purpose-engineered with domain-specific prompt architectures, structured output contracts, and personalization feedback loops. Here is how the AI thinking works under the hood.</p>
+
+      <div class="card" style="margin-top: 1.5rem;">
+        <h4>⚙️ The Prompt Architecture in Practice</h4>
+        <p>Below is a simplified view of how prompts are structured across different features — each one is a standalone AI persona with strict behavioral rules:</p>
+        <div class="table-container" style="margin-top: 1rem; margin-bottom: 0;">
+          <table>
+            <thead>
+              <tr>
+                <th>Feature</th>
+                <th>AI Persona</th>
+                <th>Output Contract</th>
+                <th>Special Techniques</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>AI Viva Engine</td>
+                <td>Bangladeshi medical professor</td>
+                <td>Strict JSON: scores[], feedback, total</td>
+                <td>Session seeds, asked-list dedup, phase-aware difficulty</td>
+              </tr>
+              <tr>
+                <td>DDx Trainer</td>
+                <td>Senior consultant (Socratic tutor)</td>
+                <td>Formatted Markdown with headings</td>
+                <td>Never reveals diagnosis directly; guides via targeted questions</td>
+              </tr>
+              <tr>
+                <td>Flashcard Generator</td>
+                <td>Medical educator</td>
+                <td>JSON array: [{question, answer, difficulty}]</td>
+                <td>Auto-strips markdown fences, JSON boundary recovery</td>
+              </tr>
+              <tr>
+                <td>Note Summarizer</td>
+                <td>Clinical note compiler</td>
+                <td>Hierarchical Markdown (H1→H2→bullets)</td>
+                <td>Preserves clinical terminology, structures by system</td>
+              </tr>
+              <tr>
+                <td>Disease DB</td>
+                <td>BD infectious disease consultant</td>
+                <td>Case scenario + management plan Markdown</td>
+                <td>Injects BD district data, National Guidelines, seasonal context</td>
+              </tr>
+              <tr>
+                <td>OSPE Grader</td>
+                <td>Practical exam rubric evaluator</td>
+                <td>Structured rubric JSON</td>
+                <td>Station-specific scoring criteria, image-based assessment</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION: Impact & Next Steps -->
+    <section id="impact">
+      <h3>Impact & Next Steps</h3>
+      <p>MedBridge addresses a critical gap in medical education infrastructure in Bangladesh — where 100,000+ MBBS students rely heavily on passive memorization with little access to interactive, AI-driven tools aligned to their own curriculum.</p>
+
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-icon">🎓</div>
+          <h4>Who This Serves</h4>
+          <p><strong>Primary:</strong> MBBS students across all 5 academic phases in Bangladesh — from 1st-year Anatomy to final-year Medicine & Surgery. <strong>Secondary:</strong> Junior doctors preparing for FCPS Part 1, medical teachers seeking digital assessment tools, and rural medical colleges with limited faculty resources.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">💡</div>
+          <h4>The Problem We Solve</h4>
+          <p>Bangladesh's medical education still relies on static PDFs, photocopied handouts, and rote-memorization guides. Viva exams are high-stakes yet students have zero practice simulations. OSPE stations are opaque until exam day. MedBridge replaces all of this with an <strong>active, progressive, AI-graded learning system</strong> that enforces mastery before allowing progression.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">📈</div>
+          <h4>Measurable Value</h4>
+          <p><strong>Active recall</strong> improves retention by 150% over passive reading (Karpicke, 2011). <strong>Spaced repetition</strong> cuts forgotten material by 80%. <strong>Gamified battles</strong> increase daily engagement by 3×. MedBridge combines all three into a single platform — purpose-built for the BMDC syllabus with no generic content.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">🌏</div>
+          <h4>Scalability & Reach</h4>
+          <p>Built as a <strong>lightweight React SPA</strong> with serverless cloud functions — no dedicated servers, scales automatically. Students only need a browser and internet. The modular AI prompt system means expanding to new subjects (e.g., Dental, Nursing) requires only new prompt templates and syllabus data, not architectural rewrites.</p>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top: 1.5rem;">
+        <h4>🚀 What Comes Next</h4>
+        <div class="steps-container" style="margin-top: 1rem;">
+          <div class="step-item">
+            <div class="step-number">1</div>
+            <div class="step-content">
+              <h4>Pilot Launch → 3 Medical Colleges</h4>
+              <p>Deploy MedBridge as a free pilot across 3 Bangladeshi medical colleges to gather student engagement data, viva score distributions, and feature usage analytics.</p>
+            </div>
+          </div>
+          <div class="step-item">
+            <div class="step-number">2</div>
+            <div class="step-content">
+              <h4>Faculty Dashboard & Institutional Licensing</h4>
+              <p>Build a teacher-facing analytics panel so professors can monitor batch-level progress, identify weak cohort areas, and assign targeted practice modules — enabling institutional subscriptions.</p>
+            </div>
+          </div>
+          <div class="step-item">
+            <div class="step-number">3</div>
+            <div class="step-content">
+              <h4>PWA + Offline Mode + Bengali Interface</h4>
+              <p>Ship a Progressive Web App with offline caching so students in low-connectivity rural areas can practice without internet. Add Bengali language layers for accessibility in remote institutions.</p>
+            </div>
+          </div>
+          <div class="step-item">
+            <div class="step-number">4</div>
+            <div class="step-content">
+              <h4>National Scale: All 117 Medical Colleges</h4>
+              <p>Partner with BMDC and DGHS to integrate MedBridge as a supplementary digital learning resource across all 117 medical colleges in Bangladesh — reaching 100,000+ students.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION: Roadmap -->
+    <section id="roadmap" style="margin-bottom: 0;">
+      <h3>Future Vision & Roadmap</h3>
+      <div class="grid-2">
+        <div class="card">
+          <h4>🌐 Bengali Interface</h4>
+          <p>Introduce custom translation layers for key terms, feedback sheets, and viva interactions to improve understanding in remote institutions.</p>
+        </div>
+        <div class="card">
+          <h4>📱 Native Mobile Apps</h4>
+          <p>Develop dedicated React Native wrappers for iOS and Android, allowing native speech processing and background push notifications.</p>
+        </div>
+        <div class="card">
+          <h4>🔌 Progressive Web App (PWA)</h4>
+          <p>Cache critical components, questions, and templates to enable complete offline mock trials and review processes.</p>
+        </div>
+        <div class="card">
+          <h4>🏥 Hospital Internship Module</h4>
+          <p>Simulated ward admission and discharge workflows to prepare students for internship rotations — including history-taking templates, investigation ordering, and bedside case presentations.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    // Theme Toggling
+    const themeToggleBtn = document.getElementById('theme-toggle');
+    const bodyElement = document.body;
+
+    themeToggleBtn.addEventListener('click', () => {
+      bodyElement.classList.toggle('light-theme');
+      
+      // Update toggle icon
+      if (bodyElement.classList.contains('light-theme')) {
+        themeToggleBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-sun"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>`;
+      } else {
+        themeToggleBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-moon"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>`;
+      }
+    });
+
+
+
+    // Scroll spy for Sidebar navigation
+    const sections = document.querySelectorAll('section');
+    const navLinks = document.querySelectorAll('.sidebar-nav a');
+
+    window.addEventListener('scroll', () => {
+      let current = '';
+      
+      sections.forEach(section => {
+        const sectionTop = section.offsetTop;
+        const sectionHeight = section.clientHeight;
+        if (pageYOffset >= (sectionTop - 150)) {
+          current = section.getAttribute('id');
+        }
+      });
+
+      navLinks.forEach(link => {
+        link.classList.remove('active');
+        if (link.getAttribute('href') === `#${current}`) {
+          link.classList.add('active');
+        }
+      });
+    });
+  </script>
+</body>
+</html>
