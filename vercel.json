@@ -1,0 +1,7 @@
+{
+  "version": 2,
+  "builds": [
+    { "src": "index.html", "use": "@vercel/static" },
+    { "src": "Screenshot_2026-05-30_120655-removebg-preview.png", "use": "@vercel/static" }
+  ]
+}
