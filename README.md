@@ -1,1 +1,1 @@
-This is The Explanation File! For my medbridge.qzz.io You can Visit the project here! Make sure to follow
+This is The Explanation File! For my medbridge.qzz.io You can Visit the project here! 
